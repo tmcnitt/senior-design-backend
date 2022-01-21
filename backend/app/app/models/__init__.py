@@ -1,2 +1,2 @@
-from .item import Item
-from .user import User
+from .staff import Staff
+from .student import Student

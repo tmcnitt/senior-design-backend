@@ -1,0 +1,16 @@
+
+User
+    id
+    first_name
+    last_name
+    email
+
+Staff
+    admin_id
+    students
+
+Student
+    staff_id
+
+Admin
+    staff

@@ -80,7 +80,6 @@ services:
       placement:
         constraints:
           - node.labels.${STACK_NAME?Variable not set}.app-db-data == true
-
   
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'

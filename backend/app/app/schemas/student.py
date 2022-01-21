@@ -1,28 +1,28 @@
+from optparse import Option
 from typing import Optional
-
 from pydantic import BaseModel, EmailStr
 
 
 # Shared properties
-class UserBase(BaseModel):
+class StudentBase(BaseModel):
     email: Optional[EmailStr] = None
-    is_active: Optional[bool] = True
-    is_superuser: bool = False
     full_name: Optional[str] = None
+    staff_id: Optional[int] = None
 
 
 # Properties to receive via API on creation
-class UserCreate(UserBase):
+class StudentCreate(StudentBase):
     email: EmailStr
     password: str
+    staff_id: int
 
 
 # Properties to receive via API on update
-class UserUpdate(UserBase):
+class StudentUpdate(StudentBase):
     password: Optional[str] = None
 
 
-class UserInDBBase(UserBase):
+class StudentInDBBase(StudentBase):
     id: Optional[int] = None
 
     class Config:
@@ -30,10 +30,5 @@ class UserInDBBase(UserBase):
 
 
 # Additional properties to return via API
-class User(UserInDBBase):
+class Student(StudentInDBBase):
     pass
-
-
-# Additional properties stored in DB
-class UserInDB(UserInDBBase):
-    hashed_password: str
