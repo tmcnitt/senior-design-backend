@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app import crud
 from app.core.config import settings
 from app.tests.utils.staff import staff_user
+from app.tests.utils.student import make_student, student_user
 from app.tests.utils.utils import faker
 from app.tests.utils.utils import authentication_headers
 
@@ -32,6 +33,26 @@ def test_create_student(
     assert user.email == created_user["email"]
     assert user.full_name == created_user["full_name"]
     assert user.staff_id == staff_user.id
+
+
+def test_get_classmates(
+    client: TestClient, db: Session, staff_user, make_student
+) -> None:
+
+    students = [make_student(staff_user.id) for _ in range(5)]
+    student = students[-1]    
+
+    headers = authentication_headers(client, student.email, student.password, "student")
+
+
+    r = client.get(
+        f"{settings.API_V1_STR}/students/", headers=headers
+    )
+    assert 200 <= r.status_code < 300
+
+    result = r.json()
+    assert len(result) == 5
+
 
 
 

@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 from app import crud
 from app.core.config import settings
 from app.tests.utils.utils import faker
-from app.tests.utils.staff import staff_user, make_staff
-from app.tests.utils.student import student_user
+from app.tests.utils.staff import make_staff_user, staff_user, make_staff
+from app.tests.utils.student import student_user, make_student
 from app.tests.utils.utils import authentication_headers
 
 def test_create_staff(
@@ -56,9 +56,6 @@ def test_move_student(
     new_staff = make_staff()
     old_staff = student_user.staff
 
-    print("Old staff id: ", old_staff.id)
-    print("New staff id: ", new_staff.id)
-
     assert old_staff.id != new_staff.id
 
     headers = authentication_headers(client, old_staff.email, old_staff.password, "staff")
@@ -87,3 +84,25 @@ def test_move_student(
     assert result[0]['email'] == student_user.email
     assert result[0]['full_name'] == student_user.full_name
     assert result[0]['id'] == student_user.id
+
+
+def test_delete_student(client: TestClient, db: Session, staff_user, make_student):
+    student = make_student(staff_user.id)
+    headers = authentication_headers(client, staff_user.email, staff_user.password, "staff")
+
+    r = client.get(
+        f"{settings.API_V1_STR}/staff/students", headers=headers,
+    )
+    result = r.json()
+    assert len(result) == 1
+
+    r = client.delete(
+        f"{settings.API_V1_STR}/students/{student.id}", headers=headers
+    )
+    assert r.status_code == 200
+
+    r = client.get(
+        f"{settings.API_V1_STR}/staff/students", headers=headers,
+    )
+    result = r.json()
+    assert len(result) == 0

@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Union
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -41,9 +41,45 @@ def create_student(
     
     return user
 
+@router.get("/", response_model=List[schemas.Student])
+def classmates(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: models.Student = Depends(deps.get_current_student_user),
+) -> Any:
+    """
+    Get all classmates for a student
+    """
 
+    staff = current_user.staff
+    return staff.students
 
+@router.delete("/{user_id}")
+def delete_student(
+    *,
+    db: Session = Depends(deps.get_db),
+    user_id: int,
+    current_staff: models.Staff = Depends(deps.get_current_staff_user),
+) -> Any:
+    """
+    Delete a student
+    """
 
+    user = crud.student.get(db, id=user_id)
+
+    if user is None:
+        raise HTTPException(
+            status_code=402,
+            detail="That student does not exist.",
+        )
+
+    if user.staff_id != current_staff.id and not current_staff.is_admin:
+        raise HTTPException(
+            status_code=401,
+            detail="You do not have permissions to update this student.",
+        )
+
+    crud.student.remove(db, id=user_id)
 
 @router.put("/{user_id}/staff", response_model=schemas.Student)
 def update_user(
