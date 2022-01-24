@@ -6,14 +6,20 @@ from fastapi.testclient import TestClient
 
 from app.core.config import settings
 
+from faker import Faker
+faker = Faker()
 
-def random_lower_string() -> str:
-    return "".join(random.choices(string.ascii_lowercase, k=32))
 
+def authentication_headers(
+     client: TestClient, email: str, password: str, scope
+) -> Dict[str, str]:
+    data = {"username": email, "password": password, "scope": scope}
 
-def random_email() -> str:
-    return f"{random_lower_string()}@{random_lower_string()}.com"
-
+    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=data)
+    response = r.json()
+    auth_token = response["access_token"]
+    headers = {"Authorization": f"Bearer {auth_token}"}
+    return headers
 
 def get_superuser_token_headers(client: TestClient) -> Dict[str, str]:
     login_data = {

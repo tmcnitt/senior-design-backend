@@ -1,4 +1,4 @@
-from typing import Generator
+from typing import Generator, Union
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -15,7 +15,6 @@ reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
 )
 
-
 def get_db() -> Generator:
     try:
         db = SessionLocal()
@@ -23,8 +22,7 @@ def get_db() -> Generator:
     finally:
         db.close()
 
-def get_current_student_user(db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
-) -> models.Student:
+def get_current_user(db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)) -> Union[models.Student, models.Staff]:
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
@@ -35,27 +33,44 @@ def get_current_student_user(db: Session = Depends(get_db), token: str = Depends
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    user = crud.student.get(db, id=token_data.sub)
+
+    user = None
+    if token_data.user_type == "student":
+        user = crud.student.get(db, id=token_data.sub)
+    elif token_data.user_type == "staff":
+        user = crud.staff.get(db, id=token_data.sub)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate audience",
+        )
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
     return user
+
+def get_current_student_user(db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
+) -> models.Student:
+    user = get_current_user(db, token)
+    if isinstance(user, models.Student):
+       return user
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User is the wrong type",
+        )
 
 def get_current_staff_user(db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
 ) -> models.Staff:
-    try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
-        )
-        token_data = schemas.TokenPayload(**payload)
-    except (jwt.JWTError, ValidationError):
+    user = get_current_user(db, token)
+    if isinstance(user, models.Staff):
+       return user
+    else:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
+            detail="User is the wrong type",
         )
-    user = crud.staff.get(db, id=token_data.sub)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
 
 
 """
