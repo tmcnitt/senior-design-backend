@@ -11,6 +11,7 @@ class StaffBase(BaseModel):
 # Properties to receive via API on creation
 class StaffCreate(StaffBase):
     email: EmailStr
+    full_name: str
     password: str
 
 

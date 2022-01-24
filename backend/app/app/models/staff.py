@@ -12,7 +12,7 @@ class Staff(Base):
     id = Column(Integer, primary_key=True, index=True)
     full_name = Column(String, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
-    password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
 
     students = relationship("Student", back_populates="staff")
     is_admin = Column(Boolean())

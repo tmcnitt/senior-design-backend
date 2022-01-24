@@ -13,12 +13,12 @@ class CRUDStudent(CRUDBase[Student, StudentCreate, StudentUpdate]):
     def get_by_email(self, db: Session, *, email: str) -> Optional[Student]:
         return db.query(Student).filter(Student.email == email).first()
 
-    def create(self, db: Session, *, obj_in: StudentCreate, staff: Staff) -> Student:
+    def create(self, db: Session, *, obj_in: StudentCreate, staff_id: int) -> Student:
         db_obj = Student(
             email=obj_in.email,
-            password=get_password_hash(obj_in.password),
             full_name=obj_in.full_name,
-            staff_id=staff.id
+            hashed_password=get_password_hash(obj_in.password),
+            staff_id=staff_id
         )
         db.add(db_obj)
         db.commit()

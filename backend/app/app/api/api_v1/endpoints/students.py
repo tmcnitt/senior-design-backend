@@ -32,7 +32,7 @@ def create_student(
             status_code=400,
             detail="The user with this username already exists in the system.",
         )
-    user = crud.student.create(db, obj_in=student_in, staff=current_staff)
+    user = crud.student.create(db, obj_in=student_in, staff_id=current_staff.id)
 
     if settings.EMAILS_ENABLED and student_in.email:
         send_new_account_email(
@@ -71,8 +71,10 @@ def update_user(
             detail="That staff member does not exist.",
         )
     
-    user_data = jsonable_encoder(user)
-    user_data.staff_id = new_staff_id
+    user.staff_id = new_staff_id
 
-    user = crud.student.update(db, db_obj=user, obj_in=user_data)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
     return user

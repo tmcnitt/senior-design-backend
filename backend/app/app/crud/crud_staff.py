@@ -15,8 +15,8 @@ class CRUDStaff(CRUDBase[Staff, StaffCreate, StaffUpdate]):
     def create(self, db: Session, *, obj_in: StaffCreate) -> Staff:
         db_obj = Staff(
             email=obj_in.email,
-            password=get_password_hash(obj_in.password),
             full_name=obj_in.full_name,
+            hashed_password=get_password_hash(obj_in.password),
             is_admin = False,
         )
         db.add(db_obj)
@@ -40,8 +40,10 @@ class CRUDStaff(CRUDBase[Staff, StaffCreate, StaffUpdate]):
         staff = self.get_by_email(db, email=email)
         if not staff:
             return None
-        if not verify_password(password, staff.password):
+
+        if not verify_password(password, staff.hashed_password):
             return None
+
         return staff
 
     def is_admin(self, staff: Staff) -> bool:

@@ -1,5 +1,6 @@
 import email
 from typing import Dict, Tuple
+from venv import create
 import pytest
 
 from fastapi.testclient import TestClient
@@ -11,12 +12,7 @@ from app.models.staff import Staff
 from app.schemas.staff import StaffCreate, StaffUpdate
 from app.tests.utils.utils import faker
 
-
-
-
-
-@pytest.fixture()
-def staff_user(db: Session) -> Staff:
+def make_staff_user(db: Session) -> Staff:
     username = faker.email()
     password = faker.password()
     full_name = faker.name()
@@ -25,27 +21,24 @@ def staff_user(db: Session) -> Staff:
     user = crud.staff.create(db=db, obj_in=user_in)
     user.password = password
     
+    return user
+
+@pytest.fixture
+def make_staff(db: Session):
+    created_staff = []
+
+    def _make_staff():
+        staff = make_staff_user(db)
+        created_staff.append(staff)
+        return staff
+    
+    yield _make_staff
+
+    for staff in created_staff:
+        crud.staff.remove(db=db, id=staff.id)
+
+@pytest.fixture()
+def staff_user(db: Session) -> Staff:
+    user = make_staff_user(db)
     yield user
-
     crud.staff.remove(db=db, id=user.id)
-
-def authentication_token_from_email(
-    *, client: TestClient, email: str, db: Session
-) -> Dict[str, str]:
-    return
-
-    """
-    Return a valid token for the user with given email.
-
-    If the user doesn't exist it is created first.
-    """
-    password = random_lower_string()
-    user = crud.user.get_by_email(db, email=email)
-    if not user:
-        user_in_create = UserCreate(username=email, email=email, password=password)
-        user = crud.user.create(db, obj_in=user_in_create)
-    else:
-        user_in_update = UserUpdate(password=password)
-        user = crud.user.update(db, db_obj=user, obj_in=user_in_update)
-
-    return user_authentication_headers(client=client, email=email, password=password)

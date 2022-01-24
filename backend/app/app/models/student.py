@@ -13,7 +13,7 @@ class Student(Base):
     id = Column(Integer, primary_key=True, index=True)
     full_name = Column(String, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
-    password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
 
     staff_id = Column(ForeignKey('staff.id'))
     staff = relationship("Staff", back_populates="students")
