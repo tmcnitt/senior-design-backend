@@ -66,3 +66,7 @@ def test_token(current_user: models.Staff = Depends(deps.get_current_staff_user)
     Test access token
     """
     return current_user
+
+@router.get("/students", response_model=List[schemas.Student])
+def students(current_user: models.Staff = Depends(deps.get_current_staff_user)) -> Any:
+    return current_user.students
