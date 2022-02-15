@@ -106,3 +106,15 @@ def test_delete_student(client: TestClient, db: Session, staff_user, make_studen
     )
     result = r.json()
     assert len(result) == 0
+
+
+def test_get_staff(
+    client: TestClient, db: Session, staff_user, make_staff
+):
+    headers = authentication_headers(client, staff_user.email, staff_user.password, "staff")
+
+    r = client.get(
+        f"{settings.API_V1_STR}/staff/", headers=headers,
+    )
+    result = r.json()
+    assert len(result) == 2
