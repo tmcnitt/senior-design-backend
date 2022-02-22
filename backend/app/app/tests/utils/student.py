@@ -35,8 +35,8 @@ def make_student(db: Session):
     
     yield _make_student
 
-    for student in current_students:
-        crud.student.remove(db=db, id=student.id)
+    #for student in current_students:
+    #    crud.student.remove(db=db, id=student.id)
 
 @pytest.fixture()
 def student_user(db: Session, staff_user) -> Student:
