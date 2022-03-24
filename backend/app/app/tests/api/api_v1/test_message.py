@@ -13,7 +13,8 @@ from app.tests.utils.utils import authentication_headers
 def test_staff_send_message(
     staff_user,
     student_user,
-    client: TestClient,db: Session
+    client: TestClient,
+    db: Session
 ) -> None:
     # Send the message 
     data = {"to_user_type": "student", "to_user_id": student_user.id, "message": "This is a test message"}
@@ -48,7 +49,8 @@ def test_staff_send_message(
 def test_student_send_message(
     staff_user,
     student_user,
-    client: TestClient,db: Session
+    client: TestClient,
+    db: Session
 ) -> None:
     # Send the message 
     data = {"to_user_type": "staff", "to_user_id": staff_user.id, "message": "This is a test message.."}

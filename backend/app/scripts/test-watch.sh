@@ -3,4 +3,4 @@
 set -e
 set -x
 
-ptw --runner "./scripts/test.sh"
+ptw --runner "./scripts/test.sh" -p

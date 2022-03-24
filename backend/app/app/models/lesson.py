@@ -10,12 +10,9 @@ if TYPE_CHECKING:
     from .lesson import Lesson  # noqa: F401
     from .lesson_student import LessonStudent  # noqa: F401
 
-
-class Student(Base):
+class Lesson(Base):
     id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    title = Column(String, index=False, nullable=False)
+    content = Column(String, index=False, nullable=False)
 
     staff_id = Column(ForeignKey('staff.id'))
-    staff = relationship("Staff", back_populates="students")

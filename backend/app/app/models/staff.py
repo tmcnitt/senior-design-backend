@@ -15,4 +15,5 @@ class Staff(Base):
     hashed_password = Column(String, nullable=False)
 
     students = relationship("Student", back_populates="staff")
+    
     is_admin = Column(Boolean())

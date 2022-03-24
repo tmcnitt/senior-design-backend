@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
-    SQLALCHEMY_DATABASE_URI_TEST: str = "sqlite:///./test.db"
+    SQLALCHEMY_DATABASE_URI_TEST: str = "sqlite:///../test.db"
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
