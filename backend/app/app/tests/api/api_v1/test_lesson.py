@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app import crud
 from app.tests.utils.utils import faker
+
 from app.tests.utils.staff import staff_user
 from app.tests.utils.lesson import lesson, make_lesson
 

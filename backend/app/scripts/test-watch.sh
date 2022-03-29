@@ -3,4 +3,4 @@
 set -e
 set -x
 
-ptw --runner "./scripts/test.sh" -p
+ptw --runner "./scripts/test.sh" -p -- --last-failed --new-first --exitfirst

@@ -1,7 +1,6 @@
 from typing import Any, List, Union
-from backend.app.app.models import staff
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException,status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
@@ -14,23 +13,76 @@ from app.core import security
 
 router = APIRouter()
 
-   
-@router.post("/:id/lock/:studentid")
-def lock(*,  
+@router.get("/", response_model=List[schemas.LessonStudent])
+def list(*,  
     db: Session = Depends(deps.get_db), 
-    current_user: Union[models.Staff,models.Student] = Depends(deps.get_current_user), 
+    selected_lesson: models.Lesson = Depends(deps.get_selected_lesson)
 ) -> Any:
     """
-    Toggle lock for student id for lesson
+    Get all students for this lesson
     """
-    pass
+    return crud.lesson_student.get_by_lesson(db, lesson_id=selected_lesson.id)
 
-@router.post("/:id/due/:studentid")
-def duedate(*,  
+@router.post("/", response_model=schemas.LessonStudent)
+def enable(*,  
     db: Session = Depends(deps.get_db), 
-    current_user: Union[models.Staff,models.Student] = Depends(deps.get_current_user), 
+    lesson_student_in: schemas.LessonStudentCreate,
+    selected_lesson: models.Lesson = Depends(deps.get_selected_lesson)
 ) -> Any:
     """
-    Update due date for lesson for student
+    Add a student to this lesson
     """
-    pass
+    return crud.lesson_student.create(db, lesson_id=selected_lesson.id, obj_in=lesson_student_in)
+
+
+@router.put("/{student_id}", response_model=schemas.LessonStudent)
+def change(*,  
+    db: Session = Depends(deps.get_db), 
+    lesson_student_in: schemas.LessonStudentUpdate,
+    student_id: int,
+    selected_lesson: models.Lesson = Depends(deps.get_selected_lesson)
+) -> Any:
+    """
+    Modify the due date for this student
+    """
+
+    db_obj = crud.lesson_student.get_by_lesson_student(db, 
+        lesson_id=selected_lesson.id, 
+        student_id=student_id
+    )
+
+    if db_obj is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student not on lesson.",
+        )
+
+    db_obj.due = lesson_student_in.due
+
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
+
+@router.delete("/{student_id}")
+def change(*,  
+    student_id: int,
+    db: Session = Depends(deps.get_db), 
+    selected_lesson: models.Lesson = Depends(deps.get_selected_lesson),
+) -> Any:
+    """
+    Remove a student from this lesson
+    """
+
+    db_obj = crud.lesson_student.get_by_lesson_student(db, 
+        lesson_id=selected_lesson.id, 
+        student_id=student_id
+    )
+
+    if db_obj is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student not on lesson.",
+        )
+    
+    db.delete(db_obj)
+    db.commit()

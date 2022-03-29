@@ -19,9 +19,9 @@ def lessons(
     Get lessons for student or staff
     """
     if isinstance(current_user, models.Student):
-        pass
+        return crud.lesson.get_by_student(db, student_id=current_user.id)
     else:
-       return crud.lesson.get_by_staff(db, staff_id=current_user.id)
+        return crud.lesson.get_by_staff(db, staff_id=current_user.id)
    
 @router.post("/", response_model=schemas.Lesson)
 def create(*,  

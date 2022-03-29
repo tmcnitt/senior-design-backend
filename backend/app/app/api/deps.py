@@ -71,3 +71,24 @@ def get_current_staff_user(db: Session = Depends(get_db), token: str = Depends(r
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User is the wrong type",
         )
+
+def get_selected_lesson(
+    lesson_id: int,
+    db: Session = Depends(get_db),     
+    current_staff: models.staff = Depends(get_current_staff_user), 
+) -> models.Lesson:
+    lesson = crud.lesson.get(db, id=lesson_id)
+
+    if lesson is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Lesson does not exist",
+        )
+
+    if lesson.staff_id != current_staff.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This is not your lesson;",
+        )
+
+    return lesson

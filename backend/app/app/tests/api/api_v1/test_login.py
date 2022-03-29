@@ -38,7 +38,6 @@ def test_use_access_token(
     client, staff_user
 ) -> None:
     headers = authentication_headers(client, staff_user.email, staff_user.password, "staff")
-    print(headers)
   
     r = client.post(
         f"{settings.API_V1_STR}/login/test-token", headers=headers,
