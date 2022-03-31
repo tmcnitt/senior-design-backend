@@ -22,6 +22,43 @@ def lessons(
         return crud.lesson.get_by_student(db, student_id=current_user.id)
     else:
         return crud.lesson.get_by_staff(db, staff_id=current_user.id)
+
+
+@router.get("/{lesson_id}", response_model=schemas.Lesson)
+def lessons(
+    *,
+    db: Session = Depends(deps.get_db),
+    lesson_id: int,
+    current_user: Union[models.Staff,models.Student] = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Get lessons for student or staff
+    """
+    lesson = crud.lesson.get(db, id=lesson_id)
+
+    if lesson is None:
+        raise HTTPException(
+            status_code=400,
+            detail="That lesson does not exist.",
+        )
+
+   
+    if isinstance(current_user, models.Student):
+        lesson_student = crud.lesson_student.get_by_lesson_student(db, lesson_id=lesson_id, student_id=current_user.id)
+        if lesson_student is None:
+            raise HTTPException(
+                status_code=401,
+                detail="You do not have access to that lesson.",
+            )
+        
+    else:
+        if lesson.staff_id != current_user.id:
+            raise HTTPException(
+                status_code=401,
+                detail="You do not own that lesson.",
+            )
+        
+    return lesson
    
 @router.post("/", response_model=schemas.Lesson)
 def create(*,  

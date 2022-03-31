@@ -36,12 +36,18 @@ def create_staff(
     return user
 
 @router.get("/", response_model=List[schemas.Staff])
-def students(*,
+def staff_list(*,
     db: Session = Depends(deps.get_db),
     _: models.Staff = Depends(deps.get_current_staff_user)
 ) -> Any:
+    """
+    Get all staff members
+    """
     return crud.staff.get_multi(db)
 
 @router.get("/students", response_model=List[schemas.Student])
 def students(current_user: models.Staff = Depends(deps.get_current_staff_user)) -> Any:
+    """
+    Get all students for staff
+    """
     return current_user.students

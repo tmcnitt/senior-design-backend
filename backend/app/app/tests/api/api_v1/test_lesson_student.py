@@ -128,5 +128,10 @@ def test_get_lesson(
     assert 200 <= r.status_code < 300
     result = r.json()
     assert len(result) == 1
-    
 
+    r = client.get(
+        f"{settings.API_V1_STR}/lessons/{lesson.id}", headers=headers
+    )
+
+    assert 200 <= r.status_code < 300
+    assert r.json()["id"] == lesson.id

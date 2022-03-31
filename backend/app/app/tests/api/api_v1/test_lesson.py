@@ -97,3 +97,19 @@ def test_staff_delete_lesson(
     assert 200 <= r.status_code < 300
     result = r.json()
     assert len(result) == num_lessons-1
+
+
+def test_staff_get_lesson(
+    db: Session,
+    client: TestClient,
+    lesson,
+    staff_user
+) -> None:
+    headers = authentication_headers(client, staff_user.email, staff_user.password, "staff")
+
+    r = client.get(
+        f"{settings.API_V1_STR}/lessons/{lesson.id}", headers=headers
+    )
+
+    assert 200 <= r.status_code < 300
+    assert r.json()["id"] == lesson.id
