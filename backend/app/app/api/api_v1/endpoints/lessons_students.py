@@ -57,7 +57,11 @@ def change(*,
             detail="Student not on lesson.",
         )
 
-    db_obj.due = lesson_student_in.due
+    if lesson_student_in.due is not None:
+        db_obj.due = lesson_student_in.due
+
+    if lesson_student_in.completed is not None:
+        db_obj.completed = lesson_student_in.completed
 
     db.commit()
     db.refresh(db_obj)

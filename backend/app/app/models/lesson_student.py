@@ -9,5 +9,5 @@ class LessonStudent(Base):
     student_id = Column(ForeignKey('student.id'), primary_key=True)
     lesson_id = Column(ForeignKey('lesson.id'), primary_key=True)
 
-    is_unlocked = Column(Boolean)
+    completed = Column(Boolean, default=False)
     due = Column(DateTime)

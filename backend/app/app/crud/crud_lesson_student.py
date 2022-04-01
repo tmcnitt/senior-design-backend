@@ -18,7 +18,8 @@ class CRUDLessonStudent(CRUDBase[LessonStudent, LessonStudentCreate, LessonStude
         db_obj = LessonStudent(
             lesson_id=lesson_id,
             student_id=obj_in.student_id,
-            due=obj_in.due
+            due=obj_in.due,
+            completed=obj_in.completed
         )
 
         db.add(db_obj)

@@ -6,6 +6,7 @@ from datetime import datetime
 
 class LessonStudentBase(BaseModel):
     due: Optional[datetime] = None
+    completed: Optional[bool] = None
 
 class LessonStudentCreate(LessonStudentBase):
     student_id: int
@@ -17,6 +18,7 @@ class LessonStudentInDBBase(LessonStudentBase):
     lesson_id: str
     student_id: int
     due: datetime
+    completed: bool
 
     class Config:
         orm_mode = True
