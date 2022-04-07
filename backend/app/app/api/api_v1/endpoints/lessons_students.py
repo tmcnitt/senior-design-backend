@@ -13,6 +13,25 @@ from app.core import security
 
 router = APIRouter()
 
+@router.get("/status", response_model=schemas.LessonStudent)
+def student_status(*,  
+    db: Session = Depends(deps.get_db), 
+    lesson_id: int,
+    current_user: models.Student = Depends(deps.get_current_student_user)
+) -> Any:
+    """
+    Get the due date and completed status of a lesson for the logged in student
+    """
+    lesson = crud.lesson_student.get_by_lesson_student(db, lesson_id=lesson_id, student_id=current_user.id)
+
+    if lesson is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student not on lesson.",
+        )
+    
+    return lesson
+
 @router.get("/", response_model=List[schemas.LessonStudent])
 def list(*,  
     db: Session = Depends(deps.get_db), 

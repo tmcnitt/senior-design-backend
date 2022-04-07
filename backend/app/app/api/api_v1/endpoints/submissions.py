@@ -1,6 +1,6 @@
 from datetime import timedelta
 from re import sub
-from typing import Any, Union, List
+from typing import Any, Union, List, Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -52,6 +52,22 @@ def make_submission(
     db.commit()
     db.refresh(db_obj)
     return db_obj
+
+@router.get("/submitted", response_model=Optional[schemas.Submission])
+def list_submission(
+    *,
+    db: Session = Depends(deps.get_db), 
+    lesson_id: int,
+    current_user: models.Student = Depends(deps.get_current_student_user), 
+) -> Any:
+    """
+    Get a submission for a student for a lesson if exists
+    """
+    submission = db.query(models.Submission).where(
+        models.Submission.lesson_id == lesson_id and models.Submission.student_id == current_user.id
+    ).first()
+
+    return submission
 
 @router.get("/", response_model=List[schemas.Submission])
 def list_submissions(

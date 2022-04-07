@@ -155,7 +155,7 @@ def test_get_lesson(
     staff_user
 ) -> None:
     data = {
-        "due": str(datetime.datetime.now()), 
+        "due": "2022-03-30T15:15:31.747676", 
         "student_id": student_user.id,
     }
 
@@ -176,6 +176,14 @@ def test_get_lesson(
     assert 200 <= r.status_code < 300
     result = r.json()
     assert len(result) == 1
+
+    r = client.get(
+        f"{settings.API_V1_STR}/lessons/{lesson.id}/students/status", headers=headers
+    )
+
+    assert 200 <= r.status_code < 300
+    result = r.json()
+    assert result['due'] == data['due']
 
     r = client.get(
         f"{settings.API_V1_STR}/lessons/{lesson.id}", headers=headers

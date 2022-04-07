@@ -33,6 +33,12 @@ def test_make_and_get_submission(
     )
     assert 200 <= r.status_code < 300
 
+    r = client.get(
+        f"{settings.API_V1_STR}/lessons/{lesson.id}/submissions/submitted", json=data, headers=student_headers
+    )
+    assert 200 <= r.status_code < 300
+    assert r.json() == None
+
     data = {
         "content": "This is a test submission"
     }
@@ -48,5 +54,11 @@ def test_make_and_get_submission(
     assert 200 <= r.status_code < 300
     result = r.json()
     assert len(result) == 1
+
+    r = client.get(
+        f"{settings.API_V1_STR}/lessons/{lesson.id}/submissions/submitted", json=data, headers=student_headers
+    )
+    assert 200 <= r.status_code < 300
+    assert r.json()['content'] == data['content']
 
    
