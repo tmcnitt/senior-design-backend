@@ -18,7 +18,7 @@ class LessonStudentInDBBase(LessonStudentBase):
     lesson_id: str
     student_id: int
     due: datetime
-    completed: bool
+    completed: Optional[bool] = False
 
     class Config:
         orm_mode = True
