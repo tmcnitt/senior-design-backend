@@ -68,7 +68,7 @@ def change(*,
     return db_obj
 
 @router.delete("/{student_id}")
-def change(*,  
+def delete(*,  
     student_id: int,
     db: Session = Depends(deps.get_db), 
     selected_lesson: models.Lesson = Depends(deps.get_selected_lesson),
