@@ -54,7 +54,7 @@ def make_submission(
     return db_obj
 
 @router.get("/", response_model=List[schemas.Submission])
-def make_submission(
+def list_submissions(
     db: Session = Depends(deps.get_db), 
     selected_lesson: models.Lesson = Depends(deps.get_selected_lesson),
     current_user: models.Staff = Depends(deps.get_current_staff_user), 
