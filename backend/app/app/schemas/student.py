@@ -19,6 +19,8 @@ class StudentCreate(StudentBase):
 # Properties to receive via API on update
 class StudentUpdate(StudentBase):
     password: Optional[str] = None
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
 
 class StudentStaffUpdate(StudentBase):
     staff_id: Optional[int] = None

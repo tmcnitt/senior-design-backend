@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
 
+from app.core.security import get_password_hash, verify_password
 from app import crud, models, schemas
 from app.api import deps
 from app.core.config import settings
@@ -81,8 +82,36 @@ def delete_student(
 
     crud.student.remove(db, id=user_id)
 
+@router.put("/", response_model=schemas.Student)
+def update_student(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: models.Student = Depends(deps.get_current_student_user),
+    student_in: schemas.StudentUpdate,
+) -> Any:
+    """
+    Update user object
+    """
+
+    user = crud.student.get(db, id=current_user.id)
+
+    if student_in.email is not None:
+        user.email = student_in.email
+
+    if student_in.full_name is not None:
+        user.full_name = student_in.full_name
+    
+    if student_in.password is not None:
+        user.hashed_password = get_password_hash(student_in.password)
+
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    
+    return user
+
 @router.put("/{user_id}/staff", response_model=schemas.Student)
-def update_user(
+def update_user_staff(
     *,
     db: Session = Depends(deps.get_db),
     user_id: int,

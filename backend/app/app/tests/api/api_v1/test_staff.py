@@ -31,7 +31,37 @@ def test_create_staff(
     assert user.email == created_user["email"]
     assert user.full_name == created_user["full_name"]
 
+def test_update_staff(
+    client: TestClient,
+    db: Session, 
+    staff_user
+) -> None:
+    headers = authentication_headers(client, staff_user.email, staff_user.password, "staff")
 
+    username = faker.email()
+    password = faker.password()
+    full_name = faker.name()
+
+    data = {"email": username, "password": password, "full_name": full_name}
+
+    r = client.put(
+        f"{settings.API_V1_STR}/staff/", json=data,headers=headers
+    )
+    assert 200 <= r.status_code < 300
+
+    created_user = r.json()
+
+    assert created_user['email'] == username
+    assert created_user['full_name'] == full_name
+
+    r = client.post(
+        f"{settings.API_V1_STR}/login/test-token", headers=headers
+    )
+    user = r.json()['user']
+
+    assert user
+    assert user['email'] == created_user["email"]
+    assert user['full_name'] == created_user["full_name"]
 
 def test_get_students(
     client: TestClient, db: Session, student_user

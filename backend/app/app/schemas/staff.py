@@ -18,7 +18,8 @@ class StaffCreate(StaffBase):
 # Properties to receive via API on update
 class StaffUpdate(StaffBase):
     password: Optional[str] = None
-
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
 
 class StaffInDBBase(StaffBase):
     id: Optional[int] = None

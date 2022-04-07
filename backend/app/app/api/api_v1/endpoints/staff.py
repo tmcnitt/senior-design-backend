@@ -3,6 +3,7 @@ from typing import Any, List
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from app.core.security import get_password_hash, verify_password
 
 from app import crud, models, schemas
 from app.api import deps
@@ -51,3 +52,32 @@ def students(current_user: models.Staff = Depends(deps.get_current_staff_user)) 
     Get all students for staff
     """
     return current_user.students
+
+
+@router.put("/", response_model=schemas.Staff)
+def update_staff(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: models.Staff = Depends(deps.get_current_staff_user),
+    staff_in: schemas.StaffUpdate,
+) -> Any:
+    """
+    Update user object
+    """
+
+    staff = crud.staff.get(db, id=current_user.id)
+
+    if staff_in.email is not None:
+        staff.email = staff_in.email
+
+    if staff_in.full_name is not None:
+        staff.full_name = staff_in.full_name
+    
+    if staff_in.password is not None:
+        staff.hashed_password = get_password_hash(staff_in.password)
+
+    db.add(staff)
+    db.commit()
+    db.refresh(staff)
+    
+    return staff
