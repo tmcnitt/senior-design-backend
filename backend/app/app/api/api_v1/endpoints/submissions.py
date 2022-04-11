@@ -1,5 +1,5 @@
 from datetime import timedelta
-from re import sub
+from sqlalchemy import and_
 from typing import Any, Union, List, Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException
@@ -64,7 +64,7 @@ def list_submission(
     Get a submission for a student for a lesson if exists
     """
     submission = db.query(models.Submission).where(
-        models.Submission.lesson_id == lesson_id and models.Submission.student_id == current_user.id
+        and_(models.Submission.lesson_id == lesson_id, models.Submission.student_id == current_user.id)
     ).first()
 
     return submission
