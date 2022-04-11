@@ -95,17 +95,7 @@ def delete(*,
     """
     Remove a student from this lesson
     """
-
-    db_obj = crud.lesson_student.get_by_lesson_student(db, 
+    crud.lesson_student.delete_lesson_students(db, 
         lesson_id=selected_lesson.id, 
         student_id=student_id
     )
-
-    if db_obj is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Student not on lesson.",
-        )
-    
-    db.delete(db_obj)
-    db.commit()

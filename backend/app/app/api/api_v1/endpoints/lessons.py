@@ -109,7 +109,6 @@ def delete(*,
     """
     Delete a lesson
     """
-
     lesson = crud.lesson.get(db, lesson_id)
 
     if lesson is None:
@@ -124,5 +123,5 @@ def delete(*,
             detail="You do not own that lesson.",
         )
     
+    crud.lesson_student.delete_lesson(db, lesson_id=lesson.id)
     crud.lesson.remove(db, id=lesson.id)
-
