@@ -83,22 +83,29 @@ def update(*,
     """
     Update a lesson
     """
-    lesson = crud.lesson.get(db, lesson_id)
+    db_obj = crud.lesson.get(db, lesson_id)
 
-    if lesson is None:
+    if db_obj is None:
         raise HTTPException(
             status_code=400,
             detail="That lesson does not exist.",
         )
 
-    if lesson.staff_id != current_user.id:
+    if db_obj.staff_id != current_user.id:
         raise HTTPException(
             status_code=401,
             detail="You do not own that lesson.",
         )
     
-    return crud.lesson.update(db, db_obj=lesson, obj_in=lesson_in)
+    if lesson_in.title is not None:
+        db_obj.title = lesson_in.title
 
+    if lesson_in.content is not None:
+        db_obj.content = lesson_in.content
+
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
 
 @router.delete("/{lesson_id}")
 def delete(*,  

@@ -34,15 +34,6 @@ class CRUDLessonStudent(CRUDBase[LessonStudent, LessonStudentCreate, LessonStude
         db.refresh(db_obj)
         return db_obj
 
-    def update(
-        self, db: Session, *, db_obj: LessonStudent, obj_in: Union[LessonStudentUpdate, Dict[str, Any]]
-    ) -> LessonStudent:
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.dict(exclude_unset=True)
-
-        return super().update(db, db_obj=db_obj, obj_in=update_data)
 
 
 lesson_student = CRUDLessonStudent(LessonStudent)
