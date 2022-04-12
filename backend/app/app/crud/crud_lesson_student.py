@@ -5,7 +5,9 @@ from sqlalchemy import and_
 
 from app.crud.base import CRUDBase
 from app.models.lesson_student import LessonStudent
-from app.schemas.lesson_student import LessonStudentCreate, LessonStudentUpdate
+from app.schemas.lesson_student import LessonStudentCreate, LessonStudentUpdate, LessonStudentSummary
+from app.models.student import Student
+from app.models.submission import Submission
 
 class CRUDLessonStudent(CRUDBase[LessonStudent, LessonStudentCreate, LessonStudentUpdate]):
     def delete_lesson(self, db:Session, *, lesson_id: int):
@@ -19,6 +21,9 @@ class CRUDLessonStudent(CRUDBase[LessonStudent, LessonStudentCreate, LessonStude
     def get_by_lesson_student(self, db:Session, *, lesson_id: int, student_id: int) -> LessonStudent:
         return db.query(LessonStudent).filter(and_(LessonStudent.lesson_id == lesson_id, LessonStudent.student_id == student_id)).first()
     
+    def get_by_lesson_summary(self, db: Session, *, lesson_id: int) -> List[LessonStudentSummary]:
+        return db.query(LessonStudent).join(Student, Student.id == LessonStudent.student_id).join(Submission, Submission.student_id == Student.id).filter(LessonStudent.lesson_id == lesson_id).all()
+
     def get_by_lesson(self, db: Session, *, lesson_id: int) -> List[LessonStudent]:
         return db.query(LessonStudent).filter(LessonStudent.lesson_id == lesson_id).all()
     

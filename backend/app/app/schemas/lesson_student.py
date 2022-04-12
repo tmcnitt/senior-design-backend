@@ -27,3 +27,6 @@ class LessonStudentInDBBase(LessonStudentBase):
 # Additional properties to return via API
 class LessonStudent(LessonStudentInDBBase):
     pass
+
+class LessonStudentSummary(LessonStudentInDBBase):
+    pass
