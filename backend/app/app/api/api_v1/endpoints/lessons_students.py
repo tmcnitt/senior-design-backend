@@ -42,10 +42,10 @@ def list(*,
     """
     return crud.lesson_student.get_by_lesson(db, lesson_id=selected_lesson.id)
 
-@router.get("/summary")
+@router.get("/summary", response_model=List[schemas.LessonStudentSummary])
 def list(*,  
     db: Session = Depends(deps.get_db), 
-    selected_lesson: models.Lesson = Depends(deps.get_selected_lesson)
+    selected_lesson: models.Lesson = Depends(deps.get_selected_lesson),
 ) -> Any:
     """
     Get all students, their names, and submissions for a lesson

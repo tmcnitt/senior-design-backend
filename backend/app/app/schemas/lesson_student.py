@@ -1,6 +1,6 @@
 from optparse import Option
 from typing import Optional, List, Tuple, Any
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 from app.models.lesson_student import LessonStudent
@@ -31,8 +31,10 @@ class LessonStudentInDBBase(LessonStudentBase):
 class LessonStudent(LessonStudentInDBBase):
     pass
 
-class LessonStudentSummary(LessonStudentInDBBase):
-    results: List[Tuple[LessonStudent, str, Optional[str]]]
+class LessonStudentSummary(BaseModel):
+    lesson_student: LessonStudent = Field(alias='LessonStudent')
+    full_name: str
+    submission: Optional[str]
 
     class Config:
         orm_mode = True
