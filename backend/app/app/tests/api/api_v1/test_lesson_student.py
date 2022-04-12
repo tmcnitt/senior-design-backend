@@ -197,3 +197,28 @@ def test_get_lesson(
         f"{settings.API_V1_STR}/lessons/{lesson.id}/students/{student_user.id}", headers=staff_headers
     )
 
+
+def test_summary(
+    db: Session,
+    client: TestClient,
+    student_user,
+    lesson,
+    staff_user
+) -> None:
+    data = {
+        "due": "2022-03-30T15:15:31.747676", 
+        "student_id": student_user.id,
+    }
+    headers = authentication_headers(client, staff_user.email, staff_user.password, "staff")
+
+    r = client.post(
+        f"{settings.API_V1_STR}/lessons/{lesson.id}/students/", json=data, headers=headers
+    )
+
+    assert 200 <= r.status_code < 300
+
+    r = client.get(
+        f"{settings.API_V1_STR}/lessons/{lesson.id}/students/summary", headers=headers
+    )
+
+    assert 200 <= r.status_code < 300

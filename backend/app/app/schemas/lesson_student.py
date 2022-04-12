@@ -32,9 +32,6 @@ class LessonStudent(LessonStudentInDBBase):
     pass
 
 class LessonStudentSummary(BaseModel):
-    lesson_student: LessonStudent = Field(alias='LessonStudent')
+    LessonStudent: LessonStudent 
     full_name: str
-    submission: Optional[str]
-
-    class Config:
-        orm_mode = True
+    content: Optional[str] = None

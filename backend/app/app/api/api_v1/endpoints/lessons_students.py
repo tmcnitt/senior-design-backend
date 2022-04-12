@@ -43,7 +43,7 @@ def list(*,
     return crud.lesson_student.get_by_lesson(db, lesson_id=selected_lesson.id)
 
 @router.get("/summary", response_model=List[schemas.LessonStudentSummary])
-def list(*,  
+def summary(*,  
     db: Session = Depends(deps.get_db), 
     selected_lesson: models.Lesson = Depends(deps.get_selected_lesson),
 ) -> Any:
