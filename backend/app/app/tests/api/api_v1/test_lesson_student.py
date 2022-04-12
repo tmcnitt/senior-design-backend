@@ -191,3 +191,9 @@ def test_get_lesson(
 
     assert 200 <= r.status_code < 300
     assert r.json()["id"] == lesson.id
+
+    staff_headers = authentication_headers(client, staff_user.email, staff_user.password, "staff")
+    _ = client.delete(
+        f"{settings.API_V1_STR}/lessons/{lesson.id}/students/{student_user.id}", headers=staff_headers
+    )
+

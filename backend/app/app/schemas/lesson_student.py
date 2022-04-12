@@ -1,8 +1,11 @@
 from optparse import Option
-from typing import Optional
+from typing import Optional, List, Tuple, Any
 from pydantic import BaseModel
 from datetime import datetime
 
+from app.models.lesson_student import LessonStudent
+from app.models.student import Student
+from app.models.submission import Submission
 
 class LessonStudentBase(BaseModel):
     due: Optional[datetime] = None
@@ -29,4 +32,7 @@ class LessonStudent(LessonStudentInDBBase):
     pass
 
 class LessonStudentSummary(LessonStudentInDBBase):
-    pass
+    results: List[Tuple[LessonStudent, str, Optional[str]]]
+
+    class Config:
+        orm_mode = True
