@@ -22,7 +22,7 @@ class CRUDLessonStudent(CRUDBase[LessonStudent, LessonStudentCreate, LessonStude
         return db.query(LessonStudent).filter(and_(LessonStudent.lesson_id == lesson_id, LessonStudent.student_id == student_id)).first()
     
     def get_by_lesson_summary(self, db: Session, *, lesson_id: int):
-        results = db.query(LessonStudent, Student.full_name, Submission).filter(Student.id == LessonStudent.student_id).filter(LessonStudent.lesson_id == lesson_id).outerjoin(Submission, and_(Submission.lesson_id == lesson_id, Submission.student_id == Student.id)).all()
+        results = db.query(LessonStudent, Student.full_name, Submission.content).filter(Student.id == LessonStudent.student_id).filter(LessonStudent.lesson_id == lesson_id).outerjoin(Submission, and_(Submission.lesson_id == lesson_id, Submission.student_id == Student.id)).all()
         return results
 
     def get_by_lesson(self, db: Session, *, lesson_id: int) -> List[LessonStudent]:
