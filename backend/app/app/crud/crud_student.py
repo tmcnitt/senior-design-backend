@@ -48,7 +48,7 @@ class CRUDStudent(CRUDBase[Student, StudentCreate, StudentUpdate]):
             return None
         return student
 
-    def delete(self, db: Session, *, id: int):
+    def remove(self, db: Session, *, id: int):
         db.query(LessonStudent).filter(LessonStudent.student_id == id).delete()
         db.query(Submission).filter(Submission.student_id == id).delete()
         db.query(Student).filter(Student.id == id).delete()
