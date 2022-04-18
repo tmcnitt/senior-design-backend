@@ -65,7 +65,6 @@ def delete_student(
     """
     Delete a student
     """
-
     user = crud.student.get(db, id=user_id)
 
     if user is None:

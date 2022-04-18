@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
 from app.models.student import Student
+from app.models.lesson_student import LessonStudent
+from app.models.submission import Submission
 from app.models.staff import Staff
 from app.schemas.student import StudentCreate, StudentUpdate
 
@@ -46,6 +48,11 @@ class CRUDStudent(CRUDBase[Student, StudentCreate, StudentUpdate]):
             return None
         return student
 
-
+    def delete(self, db: Session, *, id: int):
+        db.query(LessonStudent).filter(LessonStudent.student_id == id).delete()
+        db.query(Submission).filter(Submission.student_id == id).delete()
+        db.query(Student).filter(Student.id == id).delete()
+        db.commit()
+        return
 
 student = CRUDStudent(Student)
