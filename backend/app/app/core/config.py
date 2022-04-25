@@ -15,7 +15,9 @@ class Settings(BaseSettings):
     # e.g: '["http://localhost", "http://localhost:4200", "http://localhost:3000", \
     # "http://localhost:8080", "http://local.dockertoolbox.tiangolo.com"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://ec2-54-176-1-242.us-west-1.compute.amazonaws.com"
+        "http://ec2-54-176-1-242.us-west-1.compute.amazonaws.com",
+        "http://172.23.0.4:80",
+        "http://localhost:80",
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
