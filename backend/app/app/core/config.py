@@ -18,7 +18,8 @@ class Settings(BaseSettings):
         "http://ec2-54-176-1-242.us-west-1.compute.amazonaws.com",
         "http://172.23.0.4:80",
         "http://localhost:80",
-        "base-project-com-backend-http@docker"
+        "base-project-com-backend-http@docker",
+        "*"
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)
